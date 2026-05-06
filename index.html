@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen King Order</title>
+    <style>
+        body { font-family: sans-serif; padding: 15px; background-color: #f4f4f4; margin: 0; }
+        h1 { text-align: center; color: #d32f2f; }
+        .item { background: #fff; margin-bottom: 12px; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-add { background: #4caf50; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; }
+        .btn-remove { background: #f44336; color: white; border: none; padding: 3px 8px; border-radius: 3px; margin-left: 10px; }
+        #cart { margin-top: 20px; padding: 15px; background: #fff; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        #tableNo { width: 95%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        .confirm-btn { width: 100%; padding: 15px; background: #2196f3; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🍽️ Kitchen King 🍽️</h1>
+    <p><b>Table Number:</b></p>
+    <input type="number" id="tableNo" placeholder="Table No. Daalo Yahan">
+
+    <div id="menu">
+        <div class="item">
+            <span><b>Dal Chawal</b> - ₹80</span>
+            <button class="btn-add" onclick="addToCart('Dal Chawal', 80)">Add +</button>
+        </div>
+        <div class="item">
+            <span><b>Sabji Roti</b> - ₹60</span>
+            <button class="btn-add" onclick="addToCart('Sabji Roti', 60)">Add +</button>
+        </div>
+        <div class="item">
+            <span><b>Paneer Masala</b> - ₹120</span>
+            <button class="btn-add" onclick="addToCart('Paneer Masala', 120)">Add +</button>
+        </div>
+    </div>
+
+    <div id="cart">
+        <h3>🛒 Aapka Order:</h3>
+        <ul id="cart-list"></ul>
+        <p id="total-price"><b>Total: ₹0</b></p>
+        <button class="confirm-btn" onclick="placeOrder()">📲 WhatsApp Pe Order Bhejo</button>
+    </div>
+
+    <script>
+        // TERA NUMBER YAHAN DAAL DIYA BHAI 👇
+        let owner_ka_whatsapp_number = "918658735159"; // 91 India ka code + tera number
+        
+        let cart = [];
+        
+        function addToCart(item, price) {
+            cart.push({naam: item, daam: price});
+            renderCart();
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+        
+        function renderCart() {
+            const list = document.getElementById('cart-list');
+            list.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.daam;
+                list.innerHTML += `<li>${item.naam} - ₹${item.daam} <button class="btn-remove" onclick="removeFromCart(${index})">X</button></li>`;
+            });
+            document.getElementById('total-price').innerHTML = `<b>Total: ₹${total}</b>`;
+        }
+        
+        function placeOrder() {
+            let table = document.getElementById('tableNo').value;
+            if(!table) { alert("Bhai pehle Table Number daal!"); return; }
+            if(cart.length == 0) { alert("Bhai kam se kam 1 item to add kar!"); return; }
+            
+            let total = 0;
+            let orderDetails = "";
+            cart.forEach(item => {
+                total += item.daam;
+                orderDetails += `• ${item.naam} - ₹${item.daam} %0A`;
+            });
+            
+            // WHATSAPP MESSAGE BANAYA 👇
+            let message = `*🔥 NEW ORDER - Kitchen King 🔥* %0A%0A`;
+            message += `*Table No:* ${table} %0A%0A`;
+            message += `*Order Details:* %0A${orderDetails}%0A`;
+            message += `*Total Bill: ₹${total}* %0A%0A`;
+            message += `_Customer ne app se order kiya hai_`;
+            
+            // TERE NUMBER PE BHEJEGA 👇
+            let whatsappURL = `https://wa.me/${owner_ka_whatsapp_number}?text=${message}`;
+            window.open(whatsappURL, '_blank');
+            
+            alert("Order tere WhatsApp pe bhej diya bhai! ✅");
+            cart = [];
+            renderCart();
+            document.getElementById('tableNo').value = '';
+        }
+    </script>
+</body>
+</html>
